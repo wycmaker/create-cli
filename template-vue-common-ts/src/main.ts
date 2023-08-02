@@ -4,7 +4,6 @@ import './extensions'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 console.log(import.meta.env.VITE_APP_MODE)
-console.log(import.meta.env.VITE_SERVER_URL)
 
 const app = createApp(App)
 

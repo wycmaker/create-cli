@@ -50,17 +50,23 @@ function rexValidator(this:string, rule:any, value:string, callback:Function) {
   else {
     switch(this) {
       case 'notChinese': 
-        callback('不可輸入中文');
+        callback('不可輸入中文')
+        break
       case 'cellphone':
-        callback('手機號碼格式錯誤');
+        callback('手機號碼格式錯誤')
+        break
       case 'email':
-        callback('E-mail格式錯誤');
+        callback('E-mail格式錯誤')
+        break
       case 'numberOnly':
-        callback('整數或小數格式輸入錯誤');
+        callback('整數或小數格式輸入錯誤')
+        break
       case 'intOnly':
-        callback('僅能輸入正整數');
+        callback('僅能輸入正整數')
+        break
       default:
-        callback('輸入格式錯誤');
+        callback('輸入格式錯誤')
+        break
     }
   }
 }
