@@ -1,0 +1,26 @@
+{
+  "name": "@wycmaker/create-vite",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "bin": {
+    "@wycmaker/create-vite": "index.js"
+  },
+  "main": "index.js",
+  "keywords": [
+    "create-vite",
+    "vite",
+    "@wycmaker"
+  ],
+  "author": "Jackson Wang <jackson@stbear.com.tw>",
+  "license": "MIT",
+  "engines": {
+    "node": "^14.18.0 || >=16.0.0"
+  },
+  "dependencies": {
+    "kolorist": "^1.5.1",
+    "minimist": "^1.2.6",
+    "ora": "^7.0.1",
+    "prompts": "^2.4.2"
+  }
+}

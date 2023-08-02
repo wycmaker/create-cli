@@ -1,0 +1,418 @@
+@import "@/assets/css/variable.scss";
+
+%menu-shared {
+  list-style-type: none;
+  padding: 0;
+  margin-left: 0px;
+}
+
+/** el-button setting**/
+@mixin button-color-setting($font-color, $border-color, $background-color, $disable-font, $disable-border, $disable-background, $hover-color) {
+  &:global(.el-button) {
+    color: $font-color;
+    border-color: $border-color;
+    background-color: $background-color;
+
+    &:hover, &:focus {
+      color: $font-color;
+      border-color: $border-color;
+      background-color: $hover-color;
+    }
+  }
+  
+  &:global(.el-button.is-disabled) {
+    color: $disable-font;
+    border-color: $disable-border;
+    background-color: $disable-background;
+  }
+
+}
+
+@mixin button-padding-setting($padding: 10px) {
+  .el-button {
+    padding: $padding;
+  }
+}
+
+/** el-pagination setting **/
+@mixin pager-color-setting($color, $background, $border) {
+  color: $color !important;
+  background-color: $background !important;
+  border: 1px solid $border !important;
+}
+
+/** el-tabs setting **/
+@mixin tabs-setting($color, $font-size, $border: unset, $font-color: unset, $hover-color: unset) {
+  .el-tabs__item {
+    @include font-setting($font-size, bold, $font-color);
+    box-shadow: none !important;
+
+    &:hover {
+      @if ($hover-color != unset) {
+        color: $hover-color;
+      } @else {
+        color: $color;
+      }
+    }
+  }
+
+  .el-tabs__item.is-active {
+    color: $color;
+  }
+
+  .el-tabs__active-bar {
+    background-color: $color;
+  }
+
+  .el-tabs__item.is-disabled {
+    color: $font-color-6;
+  }
+
+  .el-tabs--card>.el-tabs__header .el-tabs__item:first-child.is-active {
+    border-left: 1px solid $color;
+  }
+
+  .el-tabs__item.is-active {
+    color: $color;
+
+    @if($border != unset) {
+      border: 1px solid $color;
+      border-bottom: none;
+    }
+  }
+}
+
+/** el-table setting **/
+@mixin table-setting($outerBorder:unset, $font-color:unset, $raduis:unset, $innerBorder:unset, $headerBorder:unset, $stripColor:unset, $hoverColor:unset, $headerColor:unset, $headerBackground:unset, $headerSize: 16px) {
+  font-size: 16px;
+  @if($raduis != unset) {
+    border-radius: $raduis;
+  }
+  @if($outerBorder != unset) {
+    border: 1px solid $outerBorder;
+  }
+  @if($font-color != unset) {
+    color: $font-color;
+  }
+
+  @if($stripColor != unset) {
+    &:global(.el-table--striped .el-table__body tr.el-table__row td) {
+      background-color: $stripColor;
+    }
+    
+    &:global(.el-table--striped .el-table__body tr.el-table__row--striped td) {
+      background-color: $white-color;
+    }
+  }
+
+  @if($hoverColor != unset) {
+    &:global(.el-table--striped .el-table__body tr.el-table__row) {
+      &:hover>td {
+        background-color: $hoverColor;
+      }
+    }
+  
+    &:global(.el-table--striped .el-table__body tr.el-table__row--striped) {
+      &:hover>td {
+        background-color: $hoverColor;
+      }
+    }
+  }
+  :global {
+
+    .el-table__row .el-table__cell {
+      padding: 6px !important;
+    }
+
+    @if($innerBorder != unset) {
+      .el-table__row td {
+        @include border-setting(border-bottom, solid, $innerBorder);
+      }
+    }
+
+    .el-table__header-wrapper th {
+      @if($headerBorder != unset) {
+        @include border-setting(border-bottom, solid, $headerBorder, 2px);
+      }
+      @if($headerColor != unset) {
+        @include font-setting($headerSize, bold, $headerColor, unset);
+      }
+      @if($headerBackground != unset) {
+        background-color: $headerBackground;
+      }
+    }
+  }
+}
+
+/** el-checkbox setting **/
+@mixin checkbox-setting($width, $height, $top, $left, $afterWidth, $afterHeight, $border-color, $font-color) {
+  .el-checkbox__inner {
+    width: $width;
+    height: $height;
+    border-color: $border-color;
+    background-color: $background-color-3;
+  }
+
+  .el-checkbox__input.is-focus .el-checkbox__inner, .el-checkbox__inner:hover {
+    border-color: $border-color;
+  }
+
+  .el-checkbox__inner::after {
+    left: $left;
+    top: $top;
+    height: $afterHeight;
+    width: $afterWidth;
+  }
+
+  .el-checkbox__input.is-indeterminate .el-checkbox__inner::before {
+    top: 7px;
+  }
+
+  .el-checkbox__input.is-disabled .el-checkbox__inner {
+    background-color: $border-color;
+  }
+
+  .el-checkbox__input.is-disabled.is-checked .el-checkbox__inner::after, .el-checkbox__input.is-disabled .el-checkbox__inner::after {
+    border-color: $white-color;
+  }
+
+  
+
+  .el-checkbox__input.is-checked .el-checkbox__inner ,.el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+    background-color: $border-color;
+    color: $white-color;
+    border-color: $border-color;
+  }
+
+  .el-checkbox__input.is-disabled.is-checked .el-checkbox__inner, .el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
+    background-color: $border-color;
+    color: $white-color;
+    border-color: $border-color;
+  }
+
+  .el-checkbox__input.is-disabled+span.el-checkbox__label {
+    color: $font-color;
+  }
+
+  .el-checkbox__input.is-checked+.el-checkbox__label {
+    color: $border-color;
+  }
+
+  .el-checkbox__input.is-disabled .el-checkbox__inner {
+    border-color: $border-color; 
+    background-color: $white-color; 
+  }
+
+  .el-checkbox__label {
+    @include font-setting(unset, bold, $font-color)
+  }
+}
+
+/** el-radio setting **/
+@mixin radio-setting($width, $height, $afterWidth, $afterHeight, $color, $font-color, $font-size, $marginBottom) {
+  .el-radio__inner {
+    width: $width;
+    height: $height;
+    margin-bottom: $marginBottom;
+    background-color: $background-color-3;
+  }
+
+  .el-radio__inner::after {
+    width: $afterWidth;
+    height: $afterHeight;
+  }
+
+  .el-radio__input.is-checked .el-radio__inner {
+    border: $color;
+    background: $color;
+  }
+  
+  .el-radio__label {
+    @include font-setting($font-size, bold, $font-color)
+  }
+  
+  .el-radio__inner, .el-radio__inner:hover {
+    border: 1px solid $color;
+  }
+  
+  .el-radio__input.is-checked+.el-radio__label {
+    color: $color;
+  }
+
+  .el-radio:focus:not(.is-focus):not(:active):not(.is-disabled) .el-radio__inner {
+    box-shadow: 0 0 2px 2px #fff;
+  }
+
+  .el-radio__input.is-disabled+span.el-radio__label {
+    color: $font-color;
+  }
+
+  .el-radio__input.is-disabled .el-radio__inner, .el-radio__input.is-disabled.is-checked .el-radio__inner {
+    border-color: $color;
+  }
+
+  .el-radio__input.is-disabled.is-checked .el-radio__inner::after {
+    background-color: $white-color;
+  }
+}
+
+/** el-switch setting **/
+@mixin switch-setting($activeColor, $inactiveColor, $font-color) {
+  .switch {
+    :global {
+      .el-switch__label {
+        color: $font-color;
+
+        &.is-active {
+          color: $activeColor;
+
+          &.el-switch__label--left {
+            color: $inactiveColor;
+          }
+        }
+      }
+
+      .el-switch__label span {
+        @include font-setting(16px, unset, unset);
+      }
+    }
+  }
+}
+
+/** input setting(el-input, el-select, el-datepicker, el-textarea) **/
+@mixin input-setting($color: unset, $backgroundColor: unset, $borderColor: unset, $placeholder-color:$font-color-7) {
+  .el-select .el-input__inner,
+  .el-input .el-input__inner,
+  .el-input.is-disabled .el-input__inner,
+  .el-textarea .el-textarea__inner {
+    @if($color != unset) {
+      color: $color;
+    }
+    @if($backgroundColor != unset) {
+      background-color: $backgroundColor;
+    }
+    @if($borderColor != unset) {
+      border-color: $borderColor;
+    }
+
+    &::placeholder {
+      color: $placeholder-color;
+    }
+  
+    &::-webkit-input-placeholder {
+      color: $placeholder-color;
+    }
+  
+    &:-moz-placeholder {
+      color: $placeholder-color;
+    }
+  
+    &::-moz-placeholder {
+      color: $placeholder-color;
+    }
+  
+    &:-ms-input-placeholder {
+      color: $placeholder-color;
+    }
+  }
+
+  .el-select .el-input__inner:hover, .el-select .el-input__inner:focus, .el-select .el-input.is-focus .el-input__inner {
+    @if($borderColor != unset) {
+      border-color: $borderColor;
+    }
+  }
+}
+
+@mixin input-width($width: unset) {
+  @if($width != unset) {
+    .el-input,
+    .el-select,
+    .el-select .el-input__inner {
+      width: $width;
+    }
+  } 
+}
+
+@mixin datepicker-width($width: unset) {
+  @if($width != unset) {
+    .el-date-editor.el-input, 
+    .el-date-editor.el-input__inner, 
+    .el-date-editor--time-select {
+      width: $width;
+    }
+  }
+}
+
+/** common setting **/
+@mixin font-setting($fontSize: unset, $fontWeight: unset, $fontColor: unset, $lineHeight: unset) {
+  @if($fontSize != unset) {
+    font-size: $fontSize;
+  }
+  @if($fontWeight != unset) {
+    font-weight: $fontWeight;
+  }
+  @if($fontColor != unset) {
+    color: $fontColor;
+  }
+  @if($lineHeight != unset) {
+    line-height: $lineHeight;
+  }
+}
+
+@mixin border-setting($property, $type, $color, $thin:1px) {
+  #{$property}: $thin $type $color !important;
+}
+
+@mixin block-size-setting($width: unset, $height: unset, $textAlign: unset, $backgroundColor: unset, $padding: unset, $margin: unset) {
+  @if($width != unset) {
+    width: $width;
+  }
+  @if($height != unset) {
+    height: $height;
+  }
+  @if($textAlign != unset) {
+    text-align: $textAlign;
+  }
+  @if($backgroundColor != unset) {
+    background-color: $backgroundColor;
+  }
+  @if($padding != unset) {
+    padding: $padding;
+  }
+  @if($margin != unset) {
+    margin: $margin;
+  }
+}
+
+@mixin background-image-setting($backgroundImage, $width, $height, $left) {
+  background-image: $backgroundImage;
+  background-position: center;
+  background-repeat: repeat;
+  background-size: 100vw calc(100vh + 50px);
+  width: $width;
+  height: $height;
+  position: absolute;
+  top:0;
+  left: $left;
+  overflow: auto;
+}
+
+/*表單外框設定*/
+@mixin form-outer-setting($padding, $width:unset, $height: unset, $left: unset, $margin: unset) {
+
+  @include block-size-setting($width, $height, unset, $white-color, $padding, unset);
+  @include border-setting(border, solid, $border-color-2);
+
+  border-radius: 10px;
+  position: relative;
+  top: 16px;
+
+  @if($margin != unset) {
+    margin: $margin;
+  }
+  
+
+  @if($left != unset) {
+    left: $left;
+  }
+}
