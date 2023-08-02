@@ -6,6 +6,7 @@ import minimist from 'minimist'
 import prompts from 'prompts'
 import { blue, cyan, magenta, red, reset, yellow } from 'kolorist'
 import ora from 'ora'
+import child_process from 'child_process'
 
 const argv = minimist(process.argv.slice(2), { string: [ '_' ] })
 const cwd = process.cwd()
@@ -68,7 +69,7 @@ const renameFiles = {
   _gitignore: './gitignore'
 }
 
-let spinner, root
+let root
 
 async function init() {
   // 專案目錄名稱
@@ -186,9 +187,6 @@ async function init() {
   // 判斷專案的來源
   template = variant || framework || template
 
-  console.log('\n')
-  spinner = ora(`Project is creat at ${root}...`).start()
-
   // 取得範本放置位置
   const templateDir = path.resolve(
     fileURLToPath(import.meta.url),
@@ -222,6 +220,34 @@ async function init() {
   pkg.name = packageName || getProjectName()
 
   write('package.json', JSON.stringify(pkg, null, 2))
+
+  // 下載所需的Package
+  const spinner = ora(`download package...`).start();
+  let dependenciesCMD = 'npm install '
+
+  const dependencies = pkg.dependencies
+  const dependenciesPkg = Object.keys(dependencies)
+
+  dependenciesPkg.forEach(item => {
+    dependenciesCMD += `${item}@${dependencies[item].replace('^', '')} `
+  })
+
+  dependenciesCMD += `--prefix ${root}`
+
+  let devDependenciesCMD = 'npm install '
+
+  const devDependencies = pkg.devDependencies
+  const devDependenciesPkg = Object.keys(devDependencies)
+
+  devDependenciesPkg.forEach(item => {
+    devDependenciesCMD += `${item}@${devDependencies[item].replace('^', '')} `
+  })
+
+  devDependenciesCMD += `-D --prefix ${root}`
+
+  await install(dependenciesCMD)
+  await install(devDependenciesCMD)
+  spinner.stop()
 }
 
 /**
@@ -319,8 +345,23 @@ function pkgFromUserAgent(userAgent) {
   }
 }
 
+/**
+ * 安裝pageage.json的NPM Package
+ * @param {string} cmd 安裝指令
+ */
+function install(cmd) {
+  return new Promise((resolve, rejects) => {
+    child_process.exec(cmd, (error, stdout, stderr) => {
+      if(error) {
+        console.log(error)
+        rejects()
+      }
+      else resolve()
+    })
+  })
+}
+
 init().then(() => {
-  spinner.stop()
   // 判斷Node Package Manager
   const pkgInfo = pkgFromUserAgent(process.env.npm_config_user_agent)
   const pkgManager = pkgInfo ? pkgInfo.name : 'npm'
@@ -331,11 +372,9 @@ init().then(() => {
   }
   switch (pkgManager) {
     case 'yarn':
-      console.log('  yarn')
       console.log('  yarn dev')
       break
     default:
-      console.log(`  ${pkgManager} install`)
       console.log(`  ${pkgManager} run dev`)
       break
   }
