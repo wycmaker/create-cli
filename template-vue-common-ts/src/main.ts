@@ -9,6 +9,7 @@ const app = createApp(App)
 
 app.use(store)
 app.use(router)
+app.use(Toast)
 
 // 註冊Element Plus的icon物件
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {

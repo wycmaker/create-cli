@@ -69,11 +69,12 @@ instance.interceptors.response.use(response => {
     }
 
     message = (status === 401 || status === 504) ? message : `${message}\nAPI：${url}`
-    info.error(message)
     if(status === 401) {
       userStore.clearUserInfo()
       router.push('/login')
     }
+
+    return Promise.reject(message)
   } else return Promise.reject(error)
 })
 
