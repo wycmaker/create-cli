@@ -4,9 +4,9 @@
   "description": "",
   "type": "module",
   "bin": {
-    "@wycmaker/create-vite": "index.js"
+    "@wycmaker/create-vite": "cli.js"
   },
-  "main": "index.js",
+  "main": "cli.js",
   "keywords": [
     "create-vite",
     "vite",
@@ -19,7 +19,6 @@
   },
   "dependencies": {
     "kolorist": "^1.5.1",
-    "minimist": "^1.2.6",
     "ora": "^7.0.1",
     "prompts": "^2.4.2"
   }
