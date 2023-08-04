@@ -39,7 +39,7 @@ async function init() {
   const templateDir = path.resolve(
     fileURLToPath(import.meta.url),
     (environment === 'cli' ? '../template/cli' : '../template/vite'),
-    `template-vue-${template}-${language}`
+    `vue-${template}-${language}`
   )
 
   const write = (file, content) => {
