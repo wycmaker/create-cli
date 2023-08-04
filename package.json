@@ -1,7 +1,7 @@
 {
-  "name": "@wycmaker/create-vite",
-  "version": "1.0.2",
-  "description": "",
+  "name": "@wycmaker/create-vue",
+  "version": "1.0.0",
+  "description": "a CLI used to Vue template generator",
   "type": "module",
   "bin": {
     "@wycmaker/create-vite": "cli.js"
