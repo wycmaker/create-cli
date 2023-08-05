@@ -18,8 +18,10 @@
     "node": "^14.18.0 || >=16.0.0"
   },
   "dependencies": {
+    "gunzip-maybe": "^1.4.2",
     "kolorist": "^1.5.1",
     "ora": "^7.0.1",
-    "prompts": "^2.4.2"
+    "prompts": "^2.4.2",
+    "tar-fs": "^3.0.4"
   }
 }
