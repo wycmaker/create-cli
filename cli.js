@@ -1,14 +1,14 @@
 #!/usr/bin/env node
-import fs from 'fs'
-import path from 'path'
-import { fileURLToPath } from 'url'
-import ora from 'ora'
 import child_process from 'child_process'
+import fs from 'fs'
+import gunzip from 'gunzip-maybe'
+import ora from 'ora'
+import path from 'path'
+import tar from 'tar-fs';
+import { fileURLToPath } from 'url'
 import prompts from './lib/prompts.js'
 
 const cwd = process.cwd()
-
-const renameFiles = { _gitignore: './gitignore' }
 
 let root
 
@@ -36,72 +36,31 @@ async function init() {
   }
 
   // 取得範本放置位置
-  const templateDir = path.resolve(
+  const templateTar = path.resolve(
     fileURLToPath(import.meta.url),
     (environment === 'cli' ? '../template/cli' : '../template/vite'),
-    `vue-${template}-${language}`
+    `vue-${template}-${language}.tar.gz`
   )
 
-  const write = (file, content) => {
-    const targetPath = renameFiles[file] ? path.join(root, renameFiles[file]) : path.join(root, file)
-    if (content) {
-      fs.writeFileSync(targetPath, content)
-    } else {
-      copy(path.join(templateDir, file), targetPath)
-    }
-  }
+  // 解壓縮範例檔案
+  const stream = fs.createReadStream(templateTar).pipe(gunzip()).pipe(tar.extract(root))
+  await stream.once('finish', async () => {
+    // 更改專案的Package Name
+    const pkgPath = path.join(root, 'package.json')
+    const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
+    pkg.name = projectName
+    fs.writeFileSync(pkgPath, JSON.stringify(pkg), { encoding: 'utf-8' })
 
-  // 寫入範本檔案
-  const files = fs.readdirSync(templateDir)
-  for (const file of files.filter((f) => f !== 'package.json')) {
-    write(file)
-  }
+    // 下載所需的Package
+    const spinner = ora(`download package...`).start();
+    let dependenciesCMD = getPkgInfo(pkg, 'dependencies')
+    await install(dependenciesCMD)
+    let devDependenciesCMD = getPkgInfo(pkg, 'devDependencies')
+    await install(devDependenciesCMD)
+    spinner.stop()
 
-  // 讀取專案範本的package.json
-  const pkg = JSON.parse(
-    fs.readFileSync(path.join(templateDir, `package.json`), 'utf-8')
-  )
-
-  // 設定專案名稱
-  pkg.name = projectName
-
-  write('package.json', JSON.stringify(pkg, null, 2))
-
-  // 下載所需的Package
-  const spinner = ora(`download package...`).start();
-  let dependenciesCMD = getPkgInfo(pkg, 'dependencies')
-  await install(dependenciesCMD)
-  let devDependenciesCMD = getPkgInfo(pkg, 'devDependencies')
-  await install(devDependenciesCMD)
-  spinner.stop()
-}
-
-/**
- * 將範本檔案複製到專案資料夾
- * @param {string} src 範本檔案位置
- * @param {string} dest 專案資料夾內的檔案位置
- */
-function copy(src, dest) {
-  const stat = fs.statSync(src)
-  if (stat.isDirectory()) {
-    copyDir(src, dest)
-  } else {
-    fs.copyFileSync(src, dest)
-  }
-}
-
-/**
- * 複製資料夾
- * @param {string} srcDir 範本資料夾
- * @param {string} destDir 專案資料夾
- */
-function copyDir(srcDir, destDir) {
-  fs.mkdirSync(destDir, { recursive: true })
-  for (const file of fs.readdirSync(srcDir)) {
-    const srcFile = path.resolve(srcDir, file)
-    const destFile = path.resolve(destDir, file)
-    copy(srcFile, destFile)
-  }
+    notice()
+  })
 }
 
 /**
@@ -165,7 +124,10 @@ function install(cmd) {
   })
 }
 
-init().then(() => {
+/**
+ * 安裝後的提醒
+ */
+function notice() {
   // 判斷Node Package Manager
   const pkgInfo = pkgFromUserAgent(process.env.npm_config_user_agent)
   const pkgManager = pkgInfo ? pkgInfo.name : 'npm'
@@ -183,6 +145,8 @@ init().then(() => {
       break
   }
   console.log()
-}).catch((e) => {
+}
+
+init().catch((e) => {
   console.error(e)
 })
