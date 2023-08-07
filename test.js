@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-import child_process from 'child_process'
 import fs from 'fs'
 import gunzip from 'gunzip-maybe'
 import ora from 'ora'
@@ -7,6 +6,7 @@ import path from 'path'
 import tar from 'tar-fs';
 import { fileURLToPath } from 'url'
 import prompts from './lib/prompts.js'
+import { install, addSignalrTool } from './lib/toolProcessor.js'
 
 const cwd = process.cwd()
 
@@ -49,17 +49,27 @@ async function init() {
     const pkgPath = path.join(root, 'package.json')
     const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
     pkg.name = projectName
-    fs.writeFileSync(pkgPath, JSON.stringify(pkg), { encoding: 'utf-8' })
+    fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2), { encoding: 'utf-8' })
 
     // 下載所需的Package
-    const spinner = ora(`download package...`).start();
+    let spinner = ora(`download package...`).start()
     let dependenciesCMD = getPkgInfo(pkg, 'dependencies')
     await install(dependenciesCMD)
     let devDependenciesCMD = getPkgInfo(pkg, 'devDependencies')
     await install(devDependenciesCMD)
     spinner.stop()
 
-    notice()
+    if (tools.length !== 0) {
+      spinner = ora(`add external tools...`).start()
+
+      for(let tool of tools) {
+        await addTool(tool, environment, language)
+      }
+      spinner.stop()
+
+      notice()
+    }
+    else notice()
   })
 }
 
@@ -109,18 +119,28 @@ function getPkgInfo(pkg, target) {
 }
 
 /**
- * 安裝pageage.json的NPM Package
- * @param {string} cmd 安裝指令
+ * 加入額外工具
+ * @param {string} tool 工具名稱 
+ * @param {string} environment 環境
+ * @param {string} language 語言
+ * @returns 
  */
-function install(cmd) {
+function addTool(tool, environment, language) {
   return new Promise((resolve, rejects) => {
-    child_process.exec(cmd, (error, stdout, stderr) => {
-      if(error) {
-        console.log(error)
-        rejects()
-      }
-      else resolve()
-    })
+    let toolDir = path.resolve(
+      fileURLToPath(import.meta.url),
+      '../template/tools',
+      `${environment}-${tool}-${language}.tar.gz`
+    )
+
+    if (fs.existsSync(toolDir)) {
+      fs.createReadStream(toolDir).pipe(gunzip()).pipe(tar.extract(root)).once('finish', async () => {
+        if(tool === 'signalr') await addSignalrTool(root, language)
+
+        resolve()
+      })
+    }
+    else rejects(`${item} tool is not exist!`)
   })
 }
 
