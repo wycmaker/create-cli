@@ -6,7 +6,7 @@ import path from 'path'
 import tar from 'tar-fs';
 import { fileURLToPath } from 'url'
 import prompts from './lib/prompts.js'
-import { install, addSignalrTool } from './lib/toolProcessor.js'
+import { install, addSignalrTool, addElectronTool } from './lib/toolProcessor.js'
 
 const cwd = process.cwd()
 
@@ -136,6 +136,7 @@ function addTool(tool, environment, language) {
     if (fs.existsSync(toolDir)) {
       fs.createReadStream(toolDir).pipe(gunzip()).pipe(tar.extract(root)).once('finish', async () => {
         if(tool === 'signalr') await addSignalrTool(root, language)
+        else if(tool === 'electron') await addElectronTool(root, language)
 
         resolve()
       })
