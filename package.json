@@ -1,6 +1,6 @@
 {
   "name": "@wycmaker/create-cli",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "a CLI used to Vue template generator",
   "type": "module",
   "bin": {
@@ -23,5 +23,13 @@
     "ora": "^7.0.1",
     "prompts": "^2.4.2",
     "tar-fs": "^3.0.4"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wycmaker/create-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wycmaker/create-cli/issues"
+  },
+  "homepage": "https://github.com/wycmaker/create-cli#readme"
 }
