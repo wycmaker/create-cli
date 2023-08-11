@@ -135,13 +135,13 @@ function addTool(tool, environment, language) {
 
     if (fs.existsSync(toolDir)) {
       fs.createReadStream(toolDir).pipe(gunzip()).pipe(tar.extract(root)).once('finish', async () => {
-        if(tool === 'signalr') await addSignalrTool(root, language)
+        if(tool === 'signalr') await addSignalrTool(root, environment, language)
         else if(tool === 'electron') await addElectronTool(root, language)
 
         resolve()
       })
     }
-    else rejects(`${item} tool is not exist!`)
+    else rejects(`${tool} tool is not exist!`)
   })
 }
 
