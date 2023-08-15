@@ -1,6 +1,6 @@
 {
   "name": "@wycmaker/create-cli",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "a CLI used to Vue template generator",
   "type": "module",
   "bin": {
